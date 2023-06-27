@@ -25,6 +25,7 @@ def collect():
     # print(f"B = [{', '.join(['0' if c == 0 else str(abs(c) * 1e4 // 1 / 1e4 * sign(c)) for c in B])}]")
     print(f"A = [{', '.join([f'{c:.5f}' for c in A])}]")
     print(f"B = [{', '.join([f'{c:.5f}' for c in B])}]")
+    print(A[49])
 
     
 
