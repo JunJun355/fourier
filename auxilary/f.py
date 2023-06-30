@@ -2,8 +2,10 @@ from math import *
 
 def f(t):
     t = t % 1
+
     # probably shouldn't matter but just in case
-    if t == 1: t = .99999
+    if t == 1: t = .999999
+
     return (x(t), y(t))
 
 ### JJJ
@@ -51,14 +53,68 @@ spline = [
     (6336, 12290, 3454, 12290),
     (3454, 12290, 3427, 12262)
 ]
+# spline = [(0, 0, 100, -400, 200, 0), (200, 0, 600, 100, 200, 200), (200, 200, 100, 600, 0, 200), (0, 200, -400, 100, 0, 0)]
+
 n = len(spline)
+
+def weighted_average(a, b, r):
+    return (b - a) * r + a
+
 def x(t):
-    q, r = t // n, t % n
-    return q
+    t *= n
+    q, r = int(t), t % 1
+
+    if len(spline[q]) == 4:
+        line = spline[q]
+        return weighted_average(line[0], line[2], r)
+    else:
+        bezier = spline[q]
+        res = 0
+        # coef = [1, 3, 3, 1]
+        coef = [1, 2, 1]
+        for i in range(len(coef)):
+            res += coef[i] * bezier[i * 2] * ((r) ** (i)) * ((1-r) ** (len(coef)-i-1))
+        return res
+        three = []
+        for i in range(0, 6, 2):
+            three.append(weighted_average(bezier[i], bezier[i + 2], r))
+        # print(len(three))
+        two = []
+        for i in range(0, 2, 1):
+            two.append(weighted_average(three[i], three[i + 1], r))
+        # print(len(two))
+        one = weighted_average(two[0], two[1], r)
+        # print(res, one)
+        return one
+        
+
 
 def y(t):
-    q, r = t // n, t % n
-    return q
+    t *= n
+    q, r = int(t), t % 1
+    
+    if len(spline[q]) == 4:
+        line = spline[q]
+        return weighted_average(line[1], line[3], r)
+    else:
+        bezier = spline[q]
+        res = 0
+        # coef = [1, 3, 3, 1]
+        coef = [1, 2, 1]
+        for i in range(len(coef)):
+            res += coef[i] * bezier[i * 2 + 1] * ((r) ** (i)) * ((1-r) ** (len(coef)-i - 1))
+        return res
+        three = []
+        for i in range(1, 7, 2):
+            three.append(weighted_average(bezier[i], bezier[i + 2], r))
+        # print(len(three))
+        two = []
+        for i in range(0, 2, 1):
+            two.append(weighted_average(three[i], three[i + 1], r))
+        # print(len(two))
+        one = weighted_average(two[0], two[1], r)
+        # print(res, one)
+        return one
 
 
 ### rectangle
